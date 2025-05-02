@@ -2,9 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MK Vault | Shop</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop | MK Vault</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #f5f5f5;
+    }
+    header, footer {
+      background-color: #1e1e1e;
+      padding: 20px;
+      text-align: center;
+    }
+    nav a {
+      color: #9ecfff;
+      margin: 0 15px;
+      text-decoration: none;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .product {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 8px;
+    }
+    .checkout-btn {
+      margin-top: 20px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .checkout-btn:hover {
+      background-color: #45a049;
+    }
+    footer a {
+      color: #888;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <!-- Stripe JS -->
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
   <header>
@@ -15,12 +70,46 @@
       <a href="contact.html">Contact</a>
     </nav>
   </header>
+
   <main>
-    <h2>Shop Our Collection</h2>
-    <p>Coming soon! Stay tuned for drops on exclusive items.</p>
+    <div class="product">
+      <h2>AirPods Max</h2>
+      <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-skyblue-202011?wid=2000&hei=2000&fmt=jpeg&qlt=95&.v=1604022365000" alt="AirPods Max" />
+      <p>High-fidelity audio, active noise cancellation, and stunning design.</p>
+      <p><strong>$549.00</strong></p>
+      <button class="checkout-btn" id="checkout-button">Checkout</button>
+    </div>
   </main>
+
   <footer>
-    &copy; 2025 MK Vault. All rights reserved.
+    <p>&copy; 2025 MK Vault | <a href="privacy.html">Privacy Policy</a></p>
   </footer>
+
+  <!-- Stripe Checkout Integration -->
+  <script>
+    var stripe = Stripe('pk_test_51RK7h1Q0fvIsdWWHUvOZOY4qTVTeUq7bvivRwP6ARHNlqVwpIl4vHLa34cvpBYmkBvXdBaq6XSDww3yfVoX9zyz100oDNgDVvL');
+    var checkoutButton = document.getElementById('checkout-button');
+
+    checkoutButton.addEventListener('click', function () {
+      fetch('/create-checkout-session', {
+        method: 'POST',
+      })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (sessionId) {
+        return stripe.redirectToCheckout({ sessionId: sessionId.id });
+      })
+      .then(function (result) {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      })
+      .catch(function (error) {
+        console.error('Error:', error);
+      });
+    });
+  </script>
 </body>
 </html>
+
